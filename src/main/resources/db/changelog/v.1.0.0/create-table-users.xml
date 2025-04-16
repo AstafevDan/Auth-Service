@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="create-table-users" author="AstafevDan">
+        <preConditions>
+            <not>
+                <tableExists tableName="users"/>
+            </not>
+        </preConditions>
+        <createTable tableName="users" remarks="Таблица пользователей">
+            <column name="id" type="bigserial" autoIncrement="true" remarks="Уникальный идентификатор пользователя">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="username" type="varchar(64)" remarks="Имя пользователя">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="email" type="varchar(255)" remarks="Email пользователя">
+                <constraints nullable="false" unique="true" checkConstraint="email ~ '^[A-Za-z0-9._+%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$'"/>
+            </column>
+            <column name="password" type="varchar(255)" remarks="Хэш пароля пользователя">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email_verified" type="boolean" defaultValueBoolean="false" remarks="Подтвержден ли email пользователя">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValue="NOW()" remarks="Дата и время создания записи"/>
+            <column name="last_modified_at" type="timestamp" defaultValue="NOW()" remarks="Дата и время обновления записи"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
