@@ -17,12 +17,39 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Фильтр аутентификации JWT, который обрабатывает входящие запросы и проверяет JWT токен.
+ * Этот фильтр применяется ко всем запросам, кроме указанного пути аутентификации ({@value PATH}).
+ *
+ * <p>Фильтр ожидает, что JWT токен будет передан в заголовке {@value AUTHORIZATION}
+ * с префиксом {@value PREFIX}.</p>
+ *
+ * <p>Для извлечения и валидации JWT токена используется {@link JwtService}.
+ * Для загрузки данных пользователя используется {@link UserDetailsService}.</p>
+ *
+ * @author Даниил Астафьев
+ * @version 1.0
+ * @see OncePerRequestFilter
+ * @see JwtService
+ * @see UserDetailsService
+ */
 @Configuration
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    /**
+     * Путь для аутентификации, который исключается из фильтрации.
+     */
     public static final String PATH = "/api/v1/auth";
+
+    /**
+     * Название заголовка, в котором передается JWT токен.
+     */
     public static final String AUTHORIZATION = "Authorization";
+
+    /**
+     * Префикс, который используется перед JWT токеном в заголовке авторизации.
+     */
     public static final String PREFIX = "Bearer ";
 
     private final JwtService jwtService;
