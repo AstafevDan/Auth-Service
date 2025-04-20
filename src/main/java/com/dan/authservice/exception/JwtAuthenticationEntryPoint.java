@@ -13,8 +13,27 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Компонент Spring Security для обработки ошибок аутентификации.
+ * Реализует интерфейс {@link AuthenticationEntryPoint}, чтобы отправлять HTTP-ответ с кодом 401 (Unauthorized)
+ * в случае неудачной аутентификации, возвращая JSON с информацией об ошибке.
+ *
+ * @author Даниил Астафьев
+ * @version 1.0
+ */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+    /**
+     * Обрабатывает ошибку аутентификации, отправляя клиенту HTTP-ответ с кодом 401.
+     * Формирует JSON-ответ, содержащий сообщение об ошибке, основанное на переданном исключении
+     * {@link AuthenticationException}.
+     *
+     * @param request       HTTP-запрос, вызвавший ошибку аутентификации
+     * @param response      HTTP-ответ для отправки клиенту
+     * @param authException исключение, возникшее при аутентификации
+     * @throws IOException если произошла ошибка при записи ответа
+     */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         Exception exception = (Exception) request.getAttribute("exception");
