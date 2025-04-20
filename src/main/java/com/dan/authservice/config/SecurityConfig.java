@@ -18,6 +18,13 @@ import java.util.List;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
+/**
+ * Конфигурация безопасности приложения с помощью Spring Security.
+ * Настраивает CORS, управление сессиями, фильтры, правила аутентификации.
+ *
+ * @author Даниил Астафьев
+ * @version 1.0
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -28,6 +35,22 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtFilter;
     private final JwtAuthenticationEntryPoint jwtEntryPoint;
 
+    /**
+     * Настраивает цепочку фильтров безопасности для обработки HTTP-запросов.
+     * <p>
+     * - Отключает CSRF-защиту.
+     * - Настраивает CORS для разрешения запросов с любых источников.
+     * - Определяет правила авторизации: разрешает доступ к публичным эндпоинтам (например, /auth/**, Swagger),
+     * остальные запросы требуют аутентификации.
+     * - Устанавливает политику управления сессиями как STATELESS (без состояния).
+     * - Добавляет JWT-фильтр перед стандартным фильтром аутентификации.
+     * - Настраивает обработку исключений аутентификации с использованием {@link JwtAuthenticationEntryPoint}.
+     * </p>
+     *
+     * @param http объект {@link HttpSecurity} для конфигурации безопасности
+     * @return настроенная цепочка фильтров {@link SecurityFilterChain}
+     * @throws Exception если произошла ошибка при конфигурации
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -42,18 +65,18 @@ public class SecurityConfig {
                 }))
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers(
-                            "/auth/**",
-                            "/v2/api-docs",
-                            "v3/api-docs",
-                            "v3/api-docs/**",
-                            "/swagger-resources",
-                            "/swagger-resources/**",
-                            "/configuration/ui",
-                            "/configuration/security",
-                            "/swagger-ui/**",
-                            "/webjars/**",
-                            "/swagger-ui.html"
-                    ).permitAll()
+                                    "/auth/**",
+                                    "/v2/api-docs",
+                                    "v3/api-docs",
+                                    "v3/api-docs/**",
+                                    "/swagger-resources",
+                                    "/swagger-resources/**",
+                                    "/configuration/ui",
+                                    "/configuration/security",
+                                    "/swagger-ui/**",
+                                    "/webjars/**",
+                                    "/swagger-ui.html"
+                            ).permitAll()
                             .anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
