@@ -17,7 +17,7 @@ spring:
     producer:
       bootstrap-servers: localhost:9092
       key-serializer: org.apache.kafka.common.serialization.LongSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 server:
   servlet:
@@ -27,6 +27,6 @@ server:
 app:
   security:
     jwt:
-      secret-key: Ot2PxPvhLVb2Ek36fDN6ZNmhy47F8DUH #рандомно сгенерированный ключ подписи для токена
+      secret-key: Ot2PxPvhLVb2Ek36fDN6ZNmhy47F8DUH #рандомно сгенерированный ключ для токена
       expiration: 900000 #15 минут
 
