@@ -5,7 +5,6 @@ import com.dan.authservice.dto.AuthenticationResponse;
 import com.dan.authservice.dto.RegistrationRequest;
 import com.dan.authservice.entity.User;
 import com.dan.authservice.exception.custom.AlreadyVerifiedException;
-import com.dan.authservice.exception.custom.UserNotVerifiedException;
 import com.dan.authservice.repository.UserRepository;
 import com.dan.authservice.service.AuthenticationService;
 import com.dan.authservice.service.JwtService;
@@ -16,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -108,7 +108,7 @@ public class AuthenticationServiceTest {
                 .build();
         when(authenticationManager.authenticate(any())).thenReturn(new UsernamePasswordAuthenticationToken(user, null));
 
-        assertThrows(UserNotVerifiedException.class, () -> authenticationService.authenticate(authenticationRequest));
+        assertThrows(DisabledException.class, () -> authenticationService.authenticate(authenticationRequest));
     }
 
     @Test
