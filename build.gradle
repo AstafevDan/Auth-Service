@@ -49,6 +49,8 @@ dependencies {
     testImplementation 'org.testcontainers:postgresql'
     testImplementation "com.h2database:h2:${versions.h2}"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
