@@ -14,8 +14,8 @@ spring:
     enabled: true
     change-log: db/changelog/db.changelog-master.xml
   kafka:
+    bootstrap-servers: localhost:9092
     producer:
-      bootstrap-servers: localhost:9092
       key-serializer: org.apache.kafka.common.serialization.LongSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
@@ -27,6 +27,6 @@ server:
 app:
   security:
     jwt:
-      secret-key: Ot2PxPvhLVb2Ek36fDN6ZNmhy47F8DUH #рандомно сгенерированный ключ для токена
+      secret-key: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855   #рандомно сгенерированный ключ для токена
       expiration: 900000 #15 минут
 
