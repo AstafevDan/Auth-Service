@@ -2,10 +2,10 @@ package com.dan.authservice.http.handler;
 
 import com.dan.authservice.dto.ErrorInformationResponse;
 import com.dan.authservice.exception.custom.AlreadyVerifiedException;
-import com.dan.authservice.exception.custom.UserNotVerifiedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -80,11 +80,11 @@ public class GlobalExceptionHandler {
     /**
      * Обрабатывает случаи, когда email пользователя не подтвержден.
      *
-     * @param ex исключение {@link UserNotVerifiedException}
+     * @param ex исключение {@link DisabledException}
      * @return ResponseEntity с {@link ErrorInformationResponse} и статусом FORBIDDEN (403)
      */
-    @ExceptionHandler(UserNotVerifiedException.class)
-    public ResponseEntity<ErrorInformationResponse> handleUserNotVerified(UserNotVerifiedException ex) {
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ErrorInformationResponse> handleUserNotVerified(DisabledException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorInformationResponse(ex.getMessage()));
     }
 

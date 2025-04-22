@@ -5,11 +5,11 @@ import com.dan.authservice.dto.AuthenticationResponse;
 import com.dan.authservice.dto.RegistrationRequest;
 import com.dan.authservice.entity.User;
 import com.dan.authservice.exception.custom.AlreadyVerifiedException;
-import com.dan.authservice.exception.custom.UserNotVerifiedException;
 import com.dan.authservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -61,7 +61,7 @@ public class AuthenticationService {
      *
      * @param request данные для аутентификации (email, password)
      * @return ответ с JWT токеном ({@link AuthenticationResponse})
-     * @throws UserNotVerifiedException если email пользователя не подтвержден
+     * @throws DisabledException если email пользователя не подтвержден
      */
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         Authentication auth = authManager.authenticate(
@@ -73,7 +73,7 @@ public class AuthenticationService {
 
         User user = (User) auth.getPrincipal();
         if (!user.getEmailVerified()) {
-            throw new UserNotVerifiedException("User " + user.getEmail() + " not verified");
+            throw new DisabledException("User " + user.getEmail() + " not verified");
         }
 
         String jwtToken = jwtService.generateToken(user);

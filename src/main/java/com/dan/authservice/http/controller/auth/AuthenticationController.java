@@ -29,7 +29,7 @@ public class AuthenticationController {
     /**
      * URL эндпоинта, которому обращается контроллер при отправке кода подтверждения.
      */
-    public static final String URL = "http://localhost:8089/api/v1/codes/verify";
+    private static final String URL = "http://localhost:8089/api/v1/codes/verify";
 
     private final AuthenticationService service;
     private final RestTemplate restTemplate;
