@@ -31,7 +31,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.liquibase:liquibase-core'
-    implementation 'org.apache.kafka:kafka-clients:4.0.0'
+    implementation "org.apache.kafka:kafka-clients:${versions.kafka}"
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.openapi}"
     implementation "io.jsonwebtoken:jjwt-api:${versions.jjwt}"
     runtimeOnly "io.jsonwebtoken:jjwt-impl:${versions.jjwt}"
