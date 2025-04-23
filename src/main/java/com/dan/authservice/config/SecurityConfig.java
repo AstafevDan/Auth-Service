@@ -82,7 +82,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint));
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint))
+                .formLogin(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
