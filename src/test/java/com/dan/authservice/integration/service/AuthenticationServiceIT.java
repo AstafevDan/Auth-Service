@@ -58,9 +58,11 @@ public class AuthenticationServiceIT extends IntegrationTestBase {
         assertThat(optionalUser.get().getEmail()).isEqualTo("test4@email.com");
         assertFalse(optionalUser.get().getEmailVerified());
 
-        KafkaConsumer<Long, String> consumer = createConsumer();
-        consumer.subscribe(Collections.singletonList("users"));
-        ConsumerRecord<Long, String> record = consumer.poll(Duration.ofSeconds(10)).records("users").iterator().next();
+        ConsumerRecord<Long, String> record;
+        try (KafkaConsumer<Long, String> consumer = createConsumer()) {
+            consumer.subscribe(Collections.singletonList("users"));
+            record = consumer.poll(Duration.ofSeconds(10)).records("users").iterator().next();
+        }
         assertThat(record.value()).isEqualTo("test4@email.com");
     }
 

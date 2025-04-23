@@ -8,12 +8,13 @@ import com.dan.authservice.exception.custom.AlreadyVerifiedException;
 import com.dan.authservice.repository.UserRepository;
 import com.dan.authservice.service.AuthenticationService;
 import com.dan.authservice.service.JwtService;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,7 +42,7 @@ public class AuthenticationServiceTest {
     private AuthenticationManager authenticationManager;
 
     @MockBean
-    private KafkaTemplate<Long, String> kafkaTemplate;
+    private KafkaProducer<Long, String> kafkaProducer;
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -58,19 +59,33 @@ public class AuthenticationServiceTest {
                 .email(email)
                 .password(password)
                 .build();
+        User savedUser = User.builder()
+                .id(1L)
+                .username(username)
+                .email(email)
+                .password(password)
+                .build();
         when(passwordEncoder.encode(password)).thenReturn(encryptedPassword);
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
         authenticationService.register(registrationRequest);
 
         verify(passwordEncoder).encode(password);
         verify(userRepository).save(any(User.class));
-        verify(kafkaTemplate).send(anyString(), eq(email));
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userArgumentCaptor.capture());
         User user = userArgumentCaptor.getValue();
         assertEquals(email, user.getEmail());
         assertEquals(encryptedPassword, user.getPassword());
         assertFalse(user.getEmailVerified());
+
+        ArgumentCaptor<ProducerRecord<Long, String>> recordCaptor = ArgumentCaptor.forClass(ProducerRecord.class);
+        verify(kafkaProducer).send(recordCaptor.capture(), any());
+
+        ProducerRecord<Long, String> sentRecord = recordCaptor.getValue();
+        assertEquals("users", sentRecord.topic());
+        assertEquals(1L, sentRecord.key());
+        assertEquals(email, sentRecord.value());
     }
 
     @Test

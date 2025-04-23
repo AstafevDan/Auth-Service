@@ -7,7 +7,9 @@ import com.dan.authservice.entity.User;
 import com.dan.authservice.exception.custom.AlreadyVerifiedException;
 import com.dan.authservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.kafka.core.KafkaTemplate;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,13 +27,19 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationService {
+
+    /**
+     * Название топика Kafka.
+     */
+    private static final String TOPIC_NAME = "users";
 
     private final UserRepository userRepository;
     private final AuthenticationManager authManager;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
-    private final KafkaTemplate<Long, String> kafkaTemplate;
+    private final KafkaProducer<Long, String> kafkaProducer;
 
     /**
      * Регистрирует нового пользователя в системе.
@@ -52,8 +60,16 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .emailVerified(false)
                 .build();
-        userRepository.save(user);
-        kafkaTemplate.send("users", request.getEmail());
+        User savedUser = userRepository.save(user);
+
+        final ProducerRecord<Long, String> record = new ProducerRecord<>(TOPIC_NAME, savedUser.getId(), savedUser.getEmail());
+        kafkaProducer.send(record, (metadata, exception) -> {
+            if (exception != null) {
+                log.error("Send failed for record {} because {}", record, exception.getMessage());
+            } else {
+                log.info("Sent record {}", record);
+            }
+        });
     }
 
     /**

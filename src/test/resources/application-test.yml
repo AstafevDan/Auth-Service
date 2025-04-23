@@ -7,3 +7,9 @@ spring:
       hibernate:
         hbm2ddl:
           auto: validate
+
+server:
+  port: 8088
+
+kafka:
+  bootstrap-servers: localhost:9092

@@ -19,7 +19,7 @@ public abstract class IntegrationTestBase {
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
+        registry.add("kafka.bootstrap-servers", kafka::getBootstrapServers);
     }
 
     @BeforeAll
