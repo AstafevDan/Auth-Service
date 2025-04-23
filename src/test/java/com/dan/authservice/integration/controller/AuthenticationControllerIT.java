@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class AuthenticationControllerIT extends IntegrationTestBase {
 
-    private static final String VERIFICATION_URL = "http://localhost:8089/api/v1/codes/verify";
+    private static final String VERIFICATION_URL = "http://mailing-service:8089/api/v1/codes/verify";
 
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
